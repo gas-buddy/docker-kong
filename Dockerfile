@@ -2,6 +2,9 @@ FROM alpine:3.4
 
 MAINTAINER Jean-Charles Sisk <jeancharles@gasbuddy.com>
 
+ARG KONG_REPO=https://github.com/gas-buddy/kong.git
+ARG KONG_BRANCH=0.9.2-gb
+
 ENV OPENRESTY_VERSION 1.9.15.1
 ENV OPENRESTY_PREFIX /opt/openresty
 ENV OPENRESTY_BUILD_DEPS "make gcc musl-dev pcre-dev openssl-dev zlib-dev ncurses-dev readline-dev curl git unzip util-linux-dev dnsmasq perl"
@@ -62,7 +65,7 @@ RUN apk add ${OPENRESTY_DEPS} libuuid bash && \
     rm -rf /tmp/luarocks-*
 
 RUN cd / && \
-    git clone -b 0.9.0-gb --depth 1 https://github.com/gas-buddy/kong.git && \
+    git clone -b ${KONG_BRANCH} --depth 1 ${KONG_REPO} && \
     cd kong && \
     luarocks make kong-*.rockspec && \
     cp /usr/local/lib/lua/5.1/libluabcrypt.so /usr/local/lib/ && \
