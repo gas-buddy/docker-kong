@@ -3,13 +3,13 @@ FROM alpine:3.4
 MAINTAINER Jean-Charles Sisk <jeancharles@gasbuddy.com>
 
 ARG KONG_REPO=https://github.com/gas-buddy/kong.git
-ARG KONG_BRANCH=0.9.2-gb
+ARG KONG_BRANCH=0.9.7-gb
 
-ENV OPENRESTY_VERSION 1.9.15.1
+ENV OPENRESTY_VERSION 1.11.2.1
 ENV OPENRESTY_PREFIX /opt/openresty
 ENV OPENRESTY_BUILD_DEPS "make gcc musl-dev pcre-dev openssl-dev zlib-dev ncurses-dev readline-dev curl git unzip util-linux-dev dnsmasq perl"
 ENV OPENRESTY_DEPS "libpcrecpp libpcre16 libpcre32 openssl libssl1.0 pcre libgcc libstdc++"
-ENV LUAROCKS_VERSION 2.3.0
+ENV LUAROCKS_VERSION 2.4.0
 
 ENV TINI_VERSION 0.9.0
 
@@ -72,7 +72,7 @@ RUN cd / && \
     mkdir /usr/local/kong && chown kong /usr/local/kong && chgrp kong /usr/local/kong
 
 RUN cd /tmp && \
-    curl -sSL https://releases.hashicorp.com/serf/0.7.0/serf_0.7.0_linux_amd64.zip > serf.zip && \
+    curl -sSL https://releases.hashicorp.com/serf/0.8.0/serf_0.8.0_linux_amd64.zip > serf.zip && \
     unzip serf.zip -d /usr/local/bin && \
     rm serf.zip
 
@@ -84,4 +84,6 @@ COPY entrypoint.sh /entrypoint.sh
 COPY kong.conf /etc/kong/kong.conf
 
 ENTRYPOINT ["sh", "/entrypoint.sh"]
+
+CMD [ "kong-app" ]
 

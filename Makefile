@@ -3,7 +3,7 @@ IMAGENAME = gasbuddy/kong
 all: build
 
 build:
-	docker build -t $(IMAGENAME) .
+	docker build --pull --no-cache -t $(IMAGENAME) .
 
 clean:
 	docker images | awk -F' ' '{if ($$1=="$(IMAGENAME)") print $$3}' | xargs -r docker rmi
