@@ -11,7 +11,7 @@ ENV OPENRESTY_BUILD_DEPS "make gcc musl-dev pcre-dev openssl-dev zlib-dev ncurse
 ENV OPENRESTY_DEPS "libpcrecpp libpcre16 libpcre32 openssl libssl1.0 pcre libgcc libstdc++"
 ENV LUAROCKS_VERSION 2.4.2
 
-ENV TINI_VERSION 0.9.0
+ENV TINI_VERSION 0.16.1
 
 ENV PATH=${OPENRESTY_PREFIX}/bin:$PATH
 
@@ -19,15 +19,7 @@ RUN addgroup kong && adduser -SDHG kong kong
 
 RUN apk add -U su-exec
 
-RUN apk add --no-cache --virtual .tini-deps ca-certificates openssl gnupg wget perl && \
-    export GNUPGHOME="$(mktemp -d)" && \
-    gpg --keyserver ha.pool.sks-keyservers.net --recv-keys 0527A9B7 && \
-    wget -O tini "https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini-static" && \
-    wget -O tini.asc "https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini-static.asc" && \
-    gpg --verify-files tini.asc && \
-    install -t /usr/local/bin/ tini && \
-    rm -r tini tini.asc "$GNUPGHOME" && \
-    apk del .tini-deps
+RUN apk add --no-cache tini
 
 RUN apk update \
   && apk add --virtual tmp-build-deps $OPENRESTY_BUILD_DEPS \
@@ -64,17 +56,12 @@ RUN apk add ${OPENRESTY_DEPS} libuuid bash && \
     make install && \
     rm -rf /tmp/luarocks-*
 
-RUN cd / && \
-    git clone -b ${KONG_BRANCH} --depth 1 ${KONG_REPO} && \
-    cd kong && \
-    luarocks make kong-*.rockspec && \
-    cp /usr/local/lib/lua/5.1/libluabcrypt.so /usr/local/lib/ && \
-    mkdir /usr/local/kong && chown kong /usr/local/kong && chgrp kong /usr/local/kong
-
-RUN cd /tmp && \
-    curl -sSL https://releases.hashicorp.com/serf/0.8.0/serf_0.8.0_linux_amd64.zip > serf.zip && \
-    unzip serf.zip -d /usr/local/bin && \
-    rm serf.zip
+ RUN cd / && \
+     git clone -b ${KONG_BRANCH} --depth 1 ${KONG_REPO} && \
+     cd kong && \
+     luarocks make kong-*.rockspec && \
+     cp /usr/local/lib/lua/5.1/libluabcrypt.so /usr/local/lib/ && \
+     mkdir /usr/local/kong && chown kong /usr/local/kong && chgrp kong /usr/local/kong
 
 # Couldn't get it to keep perl and dnsmasq without messing up other stuff... Just reinstalling for now.
 RUN apk del tmp-build-deps && \
