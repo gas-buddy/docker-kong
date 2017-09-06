@@ -3,13 +3,13 @@ FROM alpine:3.4
 MAINTAINER Jean-Charles Sisk <jeancharles@gasbuddy.com>
 
 ARG KONG_REPO=https://github.com/gas-buddy/kong.git
-ARG KONG_BRANCH=0.9.7-gb
+ARG KONG_BRANCH=djmax/0.11
 
-ENV OPENRESTY_VERSION 1.11.2.1
+ENV OPENRESTY_VERSION 1.11.2.4
 ENV OPENRESTY_PREFIX /opt/openresty
 ENV OPENRESTY_BUILD_DEPS "make gcc musl-dev pcre-dev openssl-dev zlib-dev ncurses-dev readline-dev curl git unzip util-linux-dev dnsmasq perl"
 ENV OPENRESTY_DEPS "libpcrecpp libpcre16 libpcre32 openssl libssl1.0 pcre libgcc libstdc++"
-ENV LUAROCKS_VERSION 2.4.0
+ENV LUAROCKS_VERSION 2.4.2
 
 ENV TINI_VERSION 0.9.0
 
@@ -54,11 +54,11 @@ RUN apk update \
 
 RUN apk add ${OPENRESTY_DEPS} libuuid bash && \
     cd /tmp && \
-    curl -sSL http://keplerproject.github.io/luarocks/releases/luarocks-${LUAROCKS_VERSION}.tar.gz | tar -xvz && \
+    curl -sSL http://github.com/luarocks/luarocks/archive/v${LUAROCKS_VERSION}.tar.gz | tar -xvz && \
     cd luarocks-* && \
     ./configure \
       --with-lua=${OPENRESTY_PREFIX}/luajit \
-      --lua-suffix=jit-2.1.0-beta2 \
+      --lua-suffix=jit \
       --with-lua-include=${OPENRESTY_PREFIX}/luajit/include/luajit-2.1 && \
     make build && \
     make install && \
