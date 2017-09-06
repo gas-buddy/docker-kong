@@ -1,4 +1,4 @@
-IMAGENAME = gasbuddy/kong
+IMAGENAME = gasbuddy/kong:0.9.7-2
 
 all: build
 

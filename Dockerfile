@@ -3,7 +3,7 @@ FROM alpine:3.4
 MAINTAINER Jean-Charles Sisk <jeancharles@gasbuddy.com>
 
 ARG KONG_REPO=https://github.com/gas-buddy/kong.git
-ARG KONG_BRANCH=0.9.7-gb
+ARG KONG_BRANCH=0.9.7-2-gb
 
 ENV OPENRESTY_VERSION 1.11.2.1
 ENV OPENRESTY_PREFIX /opt/openresty
